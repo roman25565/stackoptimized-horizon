@@ -1,0 +1,15 @@
+[package]
+name = "stackoptimized-engine"
+version = "2.0.0"
+edition = "2024"
+license = "MIT"
+description = "StackOptimized for Horizon: per-item max stack size with item-safety rules"
+
+[lib]
+path = "src/lib.rs"
+
+# Only crates already in Horizon's Cargo.lock (horizon-mixins refuses others).
+[dependencies]
+serde_json = "1.0.151"
+toml = "1.1.6"
+log = "0.4"

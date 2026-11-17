@@ -1,0 +1,11 @@
+target/
+test-server/
+test-server-engine*/
+*.log
+*.bak
+*.bak-*
+*.pre*.bak
+.claude/
+__pycache__/
+node_modules/
+README.uk.md

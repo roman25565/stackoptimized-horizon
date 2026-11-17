@@ -1,0 +1,37 @@
+# StackOptimized for Horizon (Minecraft 26.3)
+#
+# This file is built into the mod. If config/stackoptimized.toml exists next to
+# the server (or the game), the mod reads that file instead of this one.
+# Changes apply after a server/game restart.
+#
+# IMPORTANT: players' Horizon clients should have the same mod with the same
+# values, otherwise their inventories show vanilla stack sizes (the server
+# still decides, so items don't dupe, but it looks wrong).
+# Easiest: edit this file before building and give players the same .hnmod.
+
+[settings]
+# Print the table of applied sizes to the console (like Enable_Print_Console).
+print_table = true
+# false (default): the mod NEVER makes a stack smaller than it was
+# (neither below vanilla nor below a size the mod has set before),
+# because the game may cut stacks bigger than the new limit and items are lost.
+# true: allow lowering (at your own risk, back up the world first).
+allow_lowering = false
+
+# Groups: a number from 1 to 99, or "default" (the vanilla size).
+[groups]
+shulker_boxes = "default"   # all shulker boxes
+beds = "default"            # all beds
+potions = "default"         # potions, splash, lingering
+minecarts = "default"       # all minecarts
+boats = "default"           # boats and rafts
+banners = "default"         # all banners
+music_discs = "default"     # all music discs
+buckets = "default"         # ONLY the empty bucket (filled buckets are blocked, see below)
+enchanted_books = "default" # blocked: the anvil eats the whole stack of books
+
+# Single items: item id = size (1..99). These override the groups.
+# You can write "minecraft:snowball", "snowball" or the old Bukkit name SNOWBALL.
+[items]
+# "minecraft:snowball" = 64
+# "minecraft:ender_pearl" = 64

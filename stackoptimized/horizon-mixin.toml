@@ -1,0 +1,105 @@
+[mod]
+id = "stackoptimized"
+version = "2.0.0"
+
+# No [compatibility] horizon_revision: the mod only hooks the named hook
+# `modify_default_components` (API 79), so the launcher builds it on the
+# Horizon version the instance plays. To install it from GitHub, add
+# [compatibility] horizon_revision = "<Nightly commit>" here.
+
+# The hook runs for every item each time the game reads the default item
+# components (items.json). We only change "minecraft:max_stack_size":
+# the item table, loot, saves and the network then use the new value as
+# if it were vanilla.
+[[injection]]
+id = "default-stack-sizes"
+hook = "modify_default_components"
+hook_version = 1
+kind = "HEAD"
+helper = "defaults.rs"
+bindings = [
+  { name = "item", ty = "&str", value = "item" },
+  { name = "components", ty = "&mut Map<String, Value>", value = "&mut *components" },
+]
+
+# All the logic (config, safety rules, ledger) lives in a separate crate that
+# is tested without Horizon. The hook sits in horizon-world, so the crate goes there.
+[[crate]]
+id = "engine"
+path = "engine"
+dependent = "horizon-world"
+
+# Re-export the crate from horizon-world so the game's glue (in horizon-client,
+# which depends on horizon-world) can use the same single instance.
+[[module]]
+id = "reexport"
+file = "crates/horizon-world/src/lib.rs"
+name = "stackoptimized"
+source = "reexport.rs"
+visibility = "pub"
+
+# /stackgui, /setmaxstacksize, /name: write the config for the next start.
+[[module]]
+id = "glue"
+file = "crates/horizon-client/src/game.rs"
+name = "stackoptimized_glue"
+source = "glue.rs"
+
+[[injection]]
+id = "register"
+hook = "register_commands"
+hook_version = 1
+kind = "HEAD"
+helper = "register.rs"
+bindings = [
+  { name = "commands", ty = "&mut Vec<crate::game::native_server::NativeCommand>", value = "&mut *commands" },
+]
+
+[[injection]]
+id = "command"
+hook = "perform_command"
+hook_version = 1
+kind = "HEAD"
+helper = "command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "&crate::game::native_server::NativeServerPlayer", value = "player" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "&mut *ran" },
+]
+
+[[injection]]
+id = "tick"
+hook = "server_tick"
+hook_version = 1
+kind = "HEAD"
+helper = "tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+]
+
+[[injection]]
+id = "menu-clicked"
+hook = "menu_clicked"
+hook_version = 1
+kind = "HEAD"
+helper = "menu_clicked.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "uuid", ty = "u128", value = "uuid" },
+  { name = "window", ty = "i32", value = "window" },
+  { name = "slot", ty = "i32", value = "slot" },
+  { name = "button", ty = "i32", value = "button" },
+  { name = "mode", ty = "i32", value = "mode" },
+]
+
+[[injection]]
+id = "menu-closed"
+hook = "menu_closed"
+hook_version = 1
+kind = "HEAD"
+helper = "menu_closed.rs"
+bindings = [
+  { name = "uuid", ty = "u128", value = "uuid" },
+  { name = "window", ty = "i32", value = "window" },
+]
