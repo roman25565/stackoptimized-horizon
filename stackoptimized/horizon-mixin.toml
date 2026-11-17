@@ -2,10 +2,11 @@
 id = "stackoptimized"
 version = "2.0.0"
 
-# No [compatibility] horizon_revision: the mod only hooks the named hook
-# `modify_default_components` (API 79), so the launcher builds it on the
-# Horizon version the instance plays. To install it from GitHub, add
-# [compatibility] horizon_revision = "<Nightly commit>" here.
+# The mod only hooks the named hook `modify_default_components` (API 79), so it
+# builds on any Horizon with that hook point; horizon_revision is the Nightly it
+# was tested on (nightly-2026-11-08-fdc87ae), the same as compatibility.json.
+[compatibility]
+horizon_revision = "fdc87aecdbd116bf1e08adcd062fcbaea8c2e2ca"
 
 # The hook runs for every item each time the game reads the default item
 # components (items.json). We only change "minecraft:max_stack_size":
